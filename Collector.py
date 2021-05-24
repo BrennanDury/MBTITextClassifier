@@ -5,18 +5,18 @@ of the commenter as columns. Bag file replaces the text with a sparse matrix
 of tf-idf statistics for each word in the entire comment set for each comment.
 Vocab file maps each word to its index in tf-idf.
 """
-import regex as re
+import re
 import numpy as np
 import pandas as pd
 from pmaw import PushshiftAPI
 from sklearn.feature_extraction.text import TfidfVectorizer
 import json
 
-limit = 1000 # The number of comments to search for. Only the comments with an mbti label are ultimately kept.
+limit = 100000 # The number of comments to search for. Only the comments with an mbti label are ultimately kept.
 
-nl_file_name = 'Small_Data/small_natural_language.csv'
-bag_file_name = 'Small_Data/small_bag_of_words.csv'
-vocab_file_name = 'Small_Data/small_vocab.txt'
+nl_file_name = 'Data/natural_language.csv'
+bag_file_name = 'Data/bag_of_words.csv'
+vocab_file_name = 'Data/vocab.json'
 
 
 def _collect_data():

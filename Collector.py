@@ -9,14 +9,14 @@ import re
 import numpy as np
 import pandas as pd
 from pmaw import PushshiftAPI
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 import json
 
-limit = 100000 # The number of comments to search for. Only the comments with an mbti label are ultimately kept.
+limit = 900000 # The number of comments to search for. Only the comments with an mbti label are ultimately kept.
 
-nl_file_name = 'Data/natural_language.csv'
-bag_file_name = 'Data/bag_of_words.csv'
-vocab_file_name = 'Data/vocab.json'
+nl_file_name = 'natural_language.csv'
+bag_file_name = 'term_frequencies.csv'
+vocab_file_name = 'vocab_tf.json'
 
 
 def _collect_data():
@@ -42,18 +42,21 @@ def main():
     """
     Collects the data and writes the data into the csv files.
     """
-    df = _collect_data()
-    df.to_csv(nl_file_name)
-    vectorizer = TfidfVectorizer()
+    df = pd.read_csv(nl_file_name)
+    #df = _collect_data()
+    #df.to_csv(nl_file_name, index=False)
+    vectorizer = CountVectorizer()
     matrix = vectorizer.fit_transform(df['text'].apply(lambda x: np.str_(x)))
+    #with open(idf_file_name, 'w') as idf_file:
+    #    idf_file.write(json.dumps(list(vectorizer.idf_)))
+    with open(vocab_file_name, 'w') as vocab_file:
+        vocab_file.write(json.dumps(vectorizer.vocabulary_))
     df2 = pd.DataFrame.sparse.from_spmatrix(matrix)
     df2['E/I'] = df['E/I']
     df2['S/N'] = df['S/N']
     df2['T/F'] = df['T/F']
     df2['J/P'] = df['J/P']
-    with open(vocab_file_name, 'w') as vocab_file:
-        vocab_file.write(json.dumps(vectorizer.vocabulary_))
-    df2.to_csv(bag_file_name)
+    df2.to_csv(bag_file_name, index=False)
 
 
 if __name__ == '__main__':
